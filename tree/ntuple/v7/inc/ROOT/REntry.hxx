@@ -68,6 +68,15 @@ public:
       return ptr;
    }
 
+   /// The same as AddValue, but creates an RField with an additional RFieldEncoder parameter.
+   template<typename T, typename... ArgsT>
+   std::shared_ptr<T> AddValueEncoder(RField<T, RCustomSizedFloat>* field, ArgsT&&... args) {
+      auto ptr = std::make_shared<T>(std::forward<ArgsT>(args)...);
+      fValues.emplace_back(Detail::RFieldValue(field->CaptureValue(ptr.get())));
+      fValuePtrs.emplace_back(ptr);
+      return ptr;
+   }
+
    Detail::RFieldValue GetValue(std::string_view fieldName) {
       for (auto& v : fValues) {
          if (v.GetField()->GetName() == fieldName)
